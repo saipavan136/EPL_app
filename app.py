@@ -2,8 +2,9 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import LogisticRegression # Imports needed if your models are these types
-from sklearn.tree import DecisionTreeClassifier    # Imports needed if your models are these types
+from sklearn.linear_model import LogisticRegression 
+from sklearn.tree import DecisionTreeClassifier
+import os
 
 # Team list
 teams = [
@@ -16,32 +17,9 @@ goal_model = joblib.load("Top_Goal_Scorer/linear_regression_model.pkl")
 match_model = joblib.load("Match_Winner/logistic_regression_model.pkl")
 league_model = joblib.load("League Winner/league_model.pkl")
 
-# Dictionary of IMAGE URLs for Each Team (Using forward slashes for compatibility)
-# !!! IMPORTANT !!! Replace these with your actual local paths (e.g., "Logos/Arsenal.png") or reliable URLs.
-GENERIC_LOGO_URL = "https://via.placeholder.com/100x100?text=LOGO"
-team_logos = {
-    "Arsenal": "Logos/Arsenal.png", 
-    "Aston Villa": "Logos/AstonVilla.png", 
-    "Bournemouth": "Logos/Bournemouth.png",
-    "Brentford": "Logos/Brentford.png",
-    "Brighton": "Logos/Brighton.png",
-    "Burnley": "Logos/Burnley.png",
-    "Chelsea": "Logos/Chelsea.png",
-    "Crystal Palace": "Logos/CrystalPalace.png",
-    "Everton": "Logos/Everton.png",
-    "Fulham": "Logos/Fulham.png",
-    "Leeds": "Logos/Leeds.png",
-    "Liverpool": "Logos/Liverpool.png",
-    "Luton": "Logos/Luton.png",
-    "Man City": "Logos/ManCity.png",
-    "Man United": "Logos/ManUnited.png",
-    "Newcastle": "Logos/Newcastle.png",
-    "Nott'm For": "Logos/NottmFor.png",
-    "Sunderland": "Logos/Sunderland.png",
-    "Tottenham": "Logos/Tottenham.png",
-    "West Ham": "Logos/WestHam.png",
-    "Wolves": "Logos/Wolves.png"
-}
+LOGO_DIR = "Logos"
+team_logos = {team: os.path.join(LOGO_DIR, f"{team}.png") for team in teams}
+team_logos["Nott'm For"] = os.path.join(LOGO_DIR, "Nottingham Forest.png")
 
 # --- Streamlit UI ---
 st.title("Infosys Springboard Internship Project")
@@ -134,14 +112,16 @@ elif st.session_state.get('option') == "Match Winner":
 
     with col_img_home:
         st.subheader(home_team)
-        st.image(team_logos.get(home_team, GENERIC_LOGO_URL), width=100, caption="Home Team Logo")
+        # Direct dictionary access - relies on the key existing
+        st.image(team_logos[home_team], width=100, caption="Home Team Logo")
 
     with col_vs:
         st.markdown("<h2 style='text-align: center; margin-top: 50px;'>VS</h2>", unsafe_allow_html=True)
         
     with col_img_away:
         st.subheader(away_team)
-        st.image(team_logos.get(away_team, GENERIC_LOGO_URL), width=100, caption="Away Team Logo")
+        # Direct dictionary access - relies on the key existing
+        st.image(team_logos[away_team], width=100, caption="Away Team Logo")
 
     st.markdown("---")
 
@@ -192,7 +172,6 @@ elif st.session_state.get('option') == "Match Winner":
 
             input_df = pd.DataFrame([feature_dict])
             
-            # Use the actual model's feature names
             expected_features = match_model.feature_names_in_ 
             input_df = input_df.reindex(columns=expected_features, fill_value=0)
 
@@ -202,11 +181,11 @@ elif st.session_state.get('option') == "Match Winner":
             if prediction == "H":
                 result_text = f"Predicted Result: **{home_team}** Win (Home Win) 🏠🎉"
                 bg_color = "#28a745"
-                winner_team_logo = team_logos.get(home_team, GENERIC_LOGO_URL)
+                winner_team_logo = team_logos[home_team] # Direct access
             elif prediction == "A":
                 result_text = f"Predicted Result: **{away_team}** Win (Away Win) ✈️🥳"
                 bg_color = "#ffc107"
-                winner_team_logo = team_logos.get(away_team, GENERIC_LOGO_URL)
+                winner_team_logo = team_logos[away_team] # Direct access
             else:
                 result_text = "Predicted Result: Draw 🤝"
                 bg_color = "#17a2b8"
@@ -228,11 +207,10 @@ elif st.session_state.get('option') == "Match Winner":
                 st.markdown(f"<div style='text-align:center; margin-top:10px;'><h3>Teams Share the Points</h3>", unsafe_allow_html=True)
                 draw_col1, draw_col2 = st.columns(2)
                 with draw_col1:
-                    st.image(team_logos.get(home_team, GENERIC_LOGO_URL), width=70, caption=home_team)
+                    st.image(team_logos[home_team], width=70, caption=home_team) # Direct access
                 with draw_col2:
-                    st.image(team_logos.get(away_team, GENERIC_LOGO_URL), width=70, caption=away_team)
+                    st.image(team_logos[away_team], width=70, caption=away_team) # Direct access
                 st.markdown(f"</div>", unsafe_allow_html=True)
-
 # =========================================================================
 # 3. League Winner Predictor
 # =========================================================================
