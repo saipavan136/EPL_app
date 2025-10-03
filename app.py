@@ -80,17 +80,17 @@ if st.session_state.get('option') == "Top Goal Scorer":
             """, 
             unsafe_allow_html=True
         )
-        sample_data = {
-            "Age": [23, 22, 23, 24],
-            "Appearances": [31, 33, 35, 37],
-            "Goals_per_90": [0.85, 0.61, 0.54, 0.41],
-            "Goals_prev_season": [36, 3, 11, 7],
-            "Big_6_Club_Feature": [1, 1, 1, 1],
-            "League_Goals_per_Match": [2.83, 2.83, 2.83, 2.85],
-            "Position": ["Forward", "Attacking Midfielder", "Winger", "Midfielder"],
-        }
-        sample_df = pd.DataFrame(sample_data, index=["1", "2", "3", "4"])
-        st.dataframe(sample_df)
+    sample_data = {
+        "Age": [23, 22, 23, 24],
+        "Appearances": [31, 33, 35, 37],
+        "Goals_per_90": [0.85, 0.61, 0.54, 0.41],
+        "Goals_prev_season": [36, 3, 11, 7],
+        "Big_6_Club_Feature": [1, 1, 1, 1],
+        "League_Goals_per_Match": [2.83, 2.83, 2.83, 2.85],
+        "Position": ["Forward", "Attacking Midfielder", "Winger", "Midfielder"],
+    }
+    sample_df = pd.DataFrame(sample_data, index=["1", "2", "3", "4"])
+    st.dataframe(sample_df)
 
 
 elif st.session_state.get('option') == "Match Winner":
@@ -187,29 +187,29 @@ elif st.session_state.get('option') == "Match Winner":
                 unsafe_allow_html=True
             )
             st.markdown("---")
-            sample_datah = {
-                "HalfTimeHomeGoals": [2, 1, 0],
-                "HomeShots": [17, 6, 5],
-                "HomeShotsOnTarget": [14, 4, 4],
-                "HomeCorners": [6, 5, 5],
-                "HomeFouls": [13, 11, 12],
-                "HomeYellowCards": [1, 1, 2],
-                "HomeRedCards": [0, 0, 0]
-            }
+    sample_datah = {
+        "HalfTimeHomeGoals": [2, 1, 0],
+        "HomeShots": [17, 6, 5],
+        "HomeShotsOnTarget": [14, 4, 4],
+        "HomeCorners": [6, 5, 5],
+        "HomeFouls": [13, 11, 12],
+        "HomeYellowCards": [1, 1, 2],
+        "HomeRedCards": [0, 0, 0]
+    }
 
-            sample_dataa = {
-                "HalfTimeAwayGoals": [0, 2, 0],
-                "AwayShots": [8, 13, 5],
-                "AwayShotsOnTarget": [4, 6, 3],
-                "AwayCorners": [6, 8, 4],
-                "AwayFouls": [12, 13, 12],
-                "AwayYellowCards": [2, 1, 3],
-                "AwayRedCards": [0, 0, 0]
-            }
+    sample_dataa = {
+        "HalfTimeAwayGoals": [0, 2, 0],
+        "AwayShots": [8, 13, 5],
+        "AwayShotsOnTarget": [4, 6, 3],
+        "AwayCorners": [6, 8, 4],
+        "AwayFouls": [12, 13, 12],
+        "AwayYellowCards": [2, 1, 3],
+        "AwayRedCards": [0, 0, 0]
+    }
 
-            sample_df = pd.DataFrame({**sample_datah, **sample_dataa}, index=["Match 1", "Match 2", "Match 3"])
+    sample_df = pd.DataFrame({**sample_datah, **sample_dataa}, index=["Match 1", "Match 2", "Match 3"])
 
-            st.dataframe(sample_df.style.set_caption("Home Stats (Left) | Away Stats (Right)"))
+    st.dataframe(sample_df.style.set_caption("Home Stats (Left) | Away Stats (Right)"))
 else: 
     st.header("League Winner Prediction")
     st.markdown("Enter season-end team statistics to predict the probability of winning the league.")
