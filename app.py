@@ -13,8 +13,8 @@ teams = [
 
 # --- Model Loading (NO DUMMY MODELS) ---
 goal_model = joblib.load("Top_Goal_Scorer/linear_regression_model.pkl")
-match_model = joblib.load("Match_Winner/decision_tree_model.pkl")
-league_model = joblib.load("League_Winner/league_model.pkl")
+match_model = joblib.load("Match_Winner/logistic_regression_model.pkl")
+league_model = joblib.load("League Winner/league_model.pkl")
 
 # --- IMAGE SETUP (USING OS.PATH.JOIN) ---
 # NOTE: This relies on the Logos directory and file names matching your local setup exactly.
