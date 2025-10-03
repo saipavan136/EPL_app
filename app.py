@@ -207,9 +207,18 @@ elif st.session_state.get('option') == "Match Winner":
         "AwayRedCards": [0, 0, 0]
     }
 
-    sample_df = pd.DataFrame({**sample_datah, **sample_dataa}, index=["Match 1", "Match 2", "Match 3"])
+    home_df = pd.DataFrame(sample_datah, index=["Match 1", "Match 2", "Match 3"])
+    away_df = pd.DataFrame(sample_dataa, index=["Match 1", "Match 2", "Match 3"])
 
-    st.dataframe(sample_df.style.set_caption("Home Stats (Left) | Away Stats (Right)"))
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.subheader("Home Stats")
+        st.dataframe(home_df)
+
+    with col2:
+        st.subheader("Away Stats")
+        st.dataframe(away_df)
 else: 
     st.header("League Winner Prediction")
     st.markdown("Enter season-end team statistics to predict the probability of winning the league.")
