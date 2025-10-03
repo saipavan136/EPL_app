@@ -13,7 +13,7 @@ teams = [
 # --- Model Loading ---
 # NOTE: This code relies strictly on these files existing in these exact paths.
 goal_model = joblib.load("Top_Goal_Scorer/linear_regression_model.pkl")
-match_model = joblib.load("Match_Winner/decision_tree_model.pkl")
+match_model = joblib.load("Match_Winner/logistic_regression_model.pkl")
 league_model = joblib.load("League_Winner/league_model.pkl")
 
 # Dictionary of IMAGE URLs for Each Team (Using forward slashes for compatibility)
