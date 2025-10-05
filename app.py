@@ -11,24 +11,15 @@ teams = [
 ]
 
 goal_model = joblib.load("Top_Goal_Scorer/linear_regression_model.pkl")
-match_model = joblib.load("Match_Winner/logistic_regression_model.pkl")
 league_model = joblib.load("League Winner/league_model.pkl")
-
-LOGO_DIR = "Logos"
-team_logos = {team: os.path.join(LOGO_DIR, f"{team}.png") for team in teams}
-team_logos["Nott'm For"] = os.path.join(LOGO_DIR, "Nottingham Forest.png")
-
 st.title("Infosys Springboard Internship Project")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     if st.button("⚽ Top Goal Scorer", use_container_width=True):
         st.session_state['option'] = "Top Goal Scorer"
 with col2:
-    if st.button("🏆 Match Winner", use_container_width=True):
-        st.session_state['option'] = "Match Winner"
-with col3:
     if st.button("🥇 League Winner", use_container_width=True):
         st.session_state['option'] = "League Winner"
 
@@ -91,134 +82,6 @@ if st.session_state.get('option') == "Top Goal Scorer":
     }
     sample_df = pd.DataFrame(sample_data, index=["1", "2", "3", "4"])
     st.dataframe(sample_df)
-
-
-elif st.session_state.get('option') == "Match Winner":
-    st.header("Match Winner Prediction")
-    st.markdown("Enter match statistics to predict the final result (Home Win, Away Win, or Draw).")
-
-    col_home_select, col_away_select = st.columns(2)
-    with col_home_select:
-        home_team = st.selectbox("Select Home Team", teams, key="home_team_select")
-    with col_away_select:
-        away_team = st.selectbox("Select Away Team", teams, key="away_team_select", index=1)
-
-    col_img_home, col_vs, col_img_away = st.columns([1, 0.5, 1])
-
-    with col_img_home:
-        st.subheader(home_team)
-        st.image(team_logos[home_team], width=100, caption="Home Team Logo") 
-
-    with col_vs:
-        st.markdown("<h2 style='text-align: center; margin-top: 50px;'>VS</h2>", unsafe_allow_html=True)
-        
-    with col_img_away:
-        st.subheader(away_team)
-        st.image(team_logos[away_team], width=100, caption="Away Team Logo") 
-
-    st.markdown("---")
-
-    col_home, col_away = st.columns(2)
-
-    with col_home:
-        st.subheader(f"{home_team} Stats (Home)")
-        HomeHalfTimeGoals = st.number_input("Half Time Goals (HTHG)", key="HomeHTGoals", min_value=0, value=1)
-        HomeShots = st.number_input("Total Shots", key="HomeShots", min_value=0, value=15)
-        HomeShotsOnTarget = st.number_input("Shots on Target", key="HomeShotsOnTarget", min_value=0, value=5)
-        HomeCorners = st.number_input("Corners", key="HomeCorners", min_value=0, value=7)
-        HomeFouls = st.number_input("Fouls", key="HomeFouls", min_value=0, value=10)
-        HomeYellowCards = st.number_input("Yellow Cards", key="HomeYellowCards", min_value=0, value=1)
-        HomeRedCards = st.number_input("Red Cards", key="HomeRedCards", min_value=0, value=0)
-
-    with col_away:
-        st.subheader(f"{away_team} Stats (Away)")
-        AwayHalfTimeGoals = st.number_input("Half Time Goals (HTAG)", key="AwayHTGoals", min_value=0, value=0)
-        AwayShots = st.number_input("Total Shots", key="AwayShots", min_value=0, value=10)
-        AwayShotsOnTarget = st.number_input("Shots on Target", key="AwayShotsOnTarget", min_value=0, value=3)
-        AwayCorners = st.number_input("Corners", key="AwayCorners", min_value=0, value=4)
-        AwayFouls = st.number_input("Fouls", key="AwayFouls", min_value=0, value=12)
-        AwayYellowCards = st.number_input("Yellow Cards", key="AwayYellowCards", min_value=0, value=2)
-        AwayRedCards = st.number_input("Red Cards", key="AwayRedCards", min_value=0, value=0)
-
-    st.markdown("---")
-
-    if st.button("Predict Match Result", type="primary", use_container_width=True):
-        if home_team == away_team:
-            st.error("Home Team and Away Team cannot be the same. Please select different teams.")
-        else:
-            feature_dict = { "HTHG": HomeHalfTimeGoals, "HTAG": AwayHalfTimeGoals }
-            
-            feature_dict.update({
-                "HomeShots": HomeShots, "AwayShots": AwayShots, "HomeShotsOnTarget": HomeShotsOnTarget, 
-                "AwayShotsOnTarget": AwayShotsOnTarget, "HomeCorners": HomeCorners, "AwayCorners": AwayCorners, 
-                "HomeFouls": HomeFouls, "AwayFouls": AwayFouls, "HomeYellowCards": HomeYellowCards, 
-                "AwayYellowCards": AwayYellowCards, "HomeRedCards": HomeRedCards, "AwayRedCards": AwayRedCards
-            })
-
-            team_ohe = {f"Home_{team}": 0 for team in teams}
-            team_ohe.update({f"Away_{team}": 0 for team in teams})
-            team_ohe[f"Home_{home_team}"] = 1
-            team_ohe[f"Away_{away_team}"] = 1
-            feature_dict.update(team_ohe)
-
-            input_df = pd.DataFrame([feature_dict])
-            
-            expected_features = match_model.feature_names_in_ 
-            input_df = input_df.reindex(columns=expected_features, fill_value=0)
-
-            prediction = match_model.predict(input_df)[0]
-            
-            if prediction == "H":
-                result_text = f"Predicted Result: **{home_team}** Win (Home Win)"
-                bg_color = "#28a745"
-            elif prediction == "A":
-                result_text = f"Predicted Result: **{away_team}** Win (Away Win)"
-                bg_color = "#ffc107"
-            else:
-                result_text = "Predicted Result: Draw"
-                bg_color = "#17a2b8"
-                
-            st.markdown(
-                f"""
-                <div style="background-color:{bg_color}; padding:15px; border-radius:8px; text-align:center; margin-top:20px;">
-                    <h3 style="color:white; margin:0;">{result_text}</h3>
-                </div>
-                """, 
-                unsafe_allow_html=True
-            )
-            st.markdown("---")
-    sample_datah = {
-        "HalfTimeHomeGoals": [2, 1, 0],
-        "HomeShots": [17, 6, 5],
-        "HomeShotsOnTarget": [14, 4, 4],
-        "HomeCorners": [6, 5, 5],
-        "HomeFouls": [13, 11, 12],
-        "HomeYellowCards": [1, 1, 2],
-        "HomeRedCards": [0, 0, 0]
-    }
-
-    sample_dataa = {
-        "HalfTimeAwayGoals": [0, 2, 0],
-        "AwayShots": [8, 13, 5],
-        "AwayShotsOnTarget": [4, 6, 3],
-        "AwayCorners": [6, 8, 4],
-        "AwayFouls": [12, 13, 12],
-        "AwayYellowCards": [2, 1, 3],
-        "AwayRedCards": [0, 0, 0]
-    }
-
-    home_df = pd.DataFrame(sample_datah, index=["Match 1", "Match 2", "Match 3"])
-    away_df = pd.DataFrame(sample_dataa, index=["Match 1", "Match 2", "Match 3"])
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.subheader("Home Stats")
-        st.dataframe(home_df)
-
-    with col2:
-        st.subheader("Away Stats")
-        st.dataframe(away_df)
 else: 
     st.header("League Winner Prediction")
     st.markdown("Enter season-end team statistics to predict the probability of winning the league.")
